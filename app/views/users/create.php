@@ -39,12 +39,7 @@
         Sign Up
       </button>
     </form>
-
-    <!-- Footer link -->
-    <p class="mt-6 text-sm text-center text-pink-800">
-      Already have an account? 
-      <a href="<?= site_url('index'); ?>" class="text-pink-700 font-semibold hover:underline">Log In</a>
-    </p>
+    
   </div>
 
 </body>
