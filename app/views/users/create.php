@@ -13,12 +13,12 @@
   <div class="bg-pink-100 shadow-xl rounded-2xl p-8 w-full max-w-md border border-pink-300">
     <h2 class="text-3xl font-bold text-center text-pink-800 mb-6">Create an Account</h2>
 
-    <!-- ✅ Form -->
-    <form action="/users/create" method="POST" class="space-y-5">
+    <!-- ✅ Sign Up Form -->
+    <form method="post" action="<?= site_url('users/create'); ?>" class="space-y-5">
 
       <!-- Username -->
       <div>
-        <label class="block text-pink-900 mb-2 font-medium">Username</label>
+        <label for="username" class="block text-pink-900 mb-2 font-medium">Username</label>
         <input type="text" id="username" name="username" placeholder="Enter username" required
                class="w-full px-4 py-2 border border-pink-400 rounded-lg bg-pink-50 text-pink-900 
                       focus:ring-2 focus:ring-pink-500 focus:border-pink-600 outline-none transition">
@@ -26,8 +26,8 @@
 
       <!-- Email -->
       <div>
-        <label class="block text-pink-900 mb-2 font-medium">Email</label>
-        <input type="email" name="email" placeholder="Enter email" required
+        <label for="email" class="block text-pink-900 mb-2 font-medium">Email</label>
+        <input type="email" id="email" name="email" placeholder="Enter email" required
                class="w-full px-4 py-2 border border-pink-400 rounded-lg bg-pink-50 text-pink-900 
                       focus:ring-2 focus:ring-pink-500 focus:border-pink-600 outline-none transition">
       </div>
@@ -40,6 +40,11 @@
       </button>
     </form>
 
+    <!-- Footer link -->
+    <p class="mt-6 text-sm text-center text-pink-800">
+      Already have an account? 
+      <a href="<?= site_url('index'); ?>" class="text-pink-700 font-semibold hover:underline">Log In</a>
+    </p>
   </div>
 
 </body>
