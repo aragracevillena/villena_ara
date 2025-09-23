@@ -48,7 +48,7 @@ class UsersController extends Controller {
         $this->pagination->initialize(
             $total_rows,
             $records_per_page,
-            $page,'index?q=' . urlencode($q)
+            $page,'users?q=' . urlencode($q)
         );
         $data['page'] = $this->pagination->paginate();
         $this->call->view('users/index', $data);
