@@ -109,7 +109,8 @@
             background: rgba(220, 38, 38, 0.15);
             border: 1px solid rgba(220, 38, 38, 0.3);
         }
-        
+
+        /* Stars background */
         .stars-background {
             position: fixed;
             top: 0;
@@ -119,14 +120,12 @@
             z-index: -1;
             overflow: hidden;
         }
-        
         .star {
             position: absolute;
             background: #4d5f43;
             border-radius: 50%;
             animation: twinkle 4s infinite ease-in-out;
         }
-        
         .glowing-star {
             position: absolute;
             background: radial-gradient(circle, #647959, #4d5f43, transparent);
@@ -134,7 +133,6 @@
             filter: blur(1px);
             animation: glow-pulse 3s infinite ease-in-out;
         }
-        
         .shooting-star {
             position: absolute;
             width: 2px;
@@ -143,17 +141,14 @@
             border-radius: 50%;
             animation: shoot 3s infinite linear;
         }
-        
         @keyframes twinkle {
             0%, 100% { opacity: 0.2; transform: scale(1); }
             50% { opacity: 0.6; transform: scale(1.2); }
         }
-        
         @keyframes glow-pulse {
             0%, 100% { opacity: 0.3; transform: scale(1); filter: blur(1px) brightness(1); }
             50% { opacity: 0.7; transform: scale(1.3); filter: blur(2px) brightness(1.3); }
         }
-        
         @keyframes shoot {
             0% { transform: translateX(-100px) translateY(-100px) rotate(45deg); opacity: 0; }
             10% { opacity: 0.8; }
@@ -169,18 +164,142 @@
             <h1 class="text-4xl font-bold text-sage-900 header-glow mb-2">User Management System</h1>
             <p class="text-sage-800 font-medium">Manage your application users with ease and precision</p>
         </header>
-        
-        <!-- Example container -->
-        <div class="bg-sage-900 p-6 rounded-xl shadow-lg text-center text-sage-100">
-            <p>This is your main content area.</p>
+
+        <div class="glow-border card-shadow rounded-xl overflow-hidden bg-sage-900">
+            <div class="px-6 py-4 border-b border-sage-700 flex flex-col sm:flex-row justify-between items-center">
+                <div>
+                    <h2 class="text-xl font-semibold text-sage-100">
+                        <i class="fas fa-users mr-2 text-sage-400"></i>
+                        <?= ($logged_in_user['role'] === 'admin') ? 'Admin Dashboard' : 'User Dashboard'; ?>
+                    </h2>
+                </div>
+                <div class="flex items-center space-x-4 mt-4 sm:mt-0">
+                    <?php if(!empty($logged_in_user)): ?>
+                        <div class="user-status px-4 py-2 rounded-lg text-sage-300">
+                            <i class="fas fa-user mr-2 text-sage-400"></i>
+                            <strong>Welcome:</strong> <?= html_escape($logged_in_user['username']); ?>
+                        </div>
+                    <?php else: ?>
+                        <div class="user-status-error px-4 py-2 rounded-lg text-red-300">
+                            <i class="fas fa-exclamation-circle mr-2"></i>Logged in user not found
+                        </div>
+                    <?php endif; ?>
+                    
+                    <a href="<?=site_url('auth/logout'); ?>" 
+                       class="btn-logout glow-button text-white px-5 py-2 rounded-lg flex items-center space-x-2 action-btn">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="px-6 py-4 border-b border-sage-800 flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
+                <form method="get" action="<?=site_url('users');?>" class="flex w-full sm:w-auto">
+                    <div class="relative flex-grow">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                            <i class="fas fa-search text-sage-600"></i>
+                        </span>
+                        <?php $q = isset($_GET['q']) ? $_GET['q'] : ''; ?>
+                        <input 
+                            type="text" 
+                            name="q" 
+                            value="<?= html_escape($q); ?>" 
+                            placeholder="Search users..." 
+                            class="form-input pl-10 pr-4 py-2 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-sage-400"
+                        >
+                    </div>
+                    <button type="submit" 
+                            class="ml-2 px-4 py-2 bg-sage-600 text-white rounded-lg hover:bg-sage-500 transition action-btn glow-button">
+                        <i class="fas fa-search mr-1"></i> Search
+                    </button>
+                </form>
+
+                <?php if ($logged_in_user['role'] === 'admin'): ?>
+                <a href="<?= site_url('users/create'); ?>"
+                   class="btn-primary glow-button text-white px-5 py-2 rounded-lg flex items-center space-x-2 action-btn">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>Create New User</span>
+                </a>
+                <?php endif; ?>
+            </div>
+            
+            <div class="overflow-x-auto p-4">
+                <div class="table-container">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="table-header">
+                                <th class="px-6 py-3 font-medium uppercase tracking-wider text-center"><i class="fas fa-hashtag mr-1"></i>ID</th>
+                                <th class="px-6 py-3 font-medium uppercase tracking-wider text-center"><i class="fas fa-user mr-1"></i>Name</th>
+                                <th class="px-6 py-3 font-medium uppercase tracking-wider text-center"><i class="fas fa-envelope mr-1"></i>Email</th>
+                                <?php if ($logged_in_user['role'] === 'admin'): ?>
+                                    <th class="px-6 py-3 font-medium uppercase tracking-wider text-center"><i class="fas fa-lock mr-1"></i>Password</th>
+                                    <th class="px-6 py-3 font-medium uppercase tracking-wider text-center"><i class="fas fa-user-tag mr-1"></i>Role</th>
+                                <?php endif; ?>
+                                <th class="px-6 py-3 font-medium uppercase tracking-wider text-center"><i class="fas fa-cog mr-1"></i>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php if(!empty($user)): ?>
+                                <?php foreach ($user as $user_item): ?>
+                                <tr class="table-row">
+                                    <td class="table-cell text-center">
+                                        <span class="bg-sage-800 px-3 py-1.5 rounded-lg text-sage-300 font-medium border border-sage-700">
+                                            #<?= $user_item['id']; ?>
+                                        </span>
+                                    </td>
+                                    <td class="table-cell text-center font-medium">
+                                        <i class="fas fa-user-circle mr-2 text-sage-400"></i><?= html_escape($user_item['username']); ?>
+                                    </td>
+                                    <td class="table-cell text-center">
+                                        <i class="fas fa-envelope mr-2 text-sage-400"></i><?= html_escape($user_item['email']); ?>
+                                    </td>
+                                    <?php if ($logged_in_user['role'] === 'admin'): ?>
+                                        <td class="table-cell text-center"><i class="fas fa-lock mr-2 text-sage-400"></i>•••••••</td>
+                                        <td class="table-cell text-center">
+                                            <span class="bg-sage-800 px-3 py-1.5 rounded-lg text-sage-300 font-medium border border-sage-700">
+                                                <?= html_escape($user_item['role']); ?>
+                                            </span>
+                                        </td>
+                                    <?php endif; ?>
+                                    <td class="table-cell text-center">
+                                        <div class="flex justify-center space-x-2">
+                                            <a href="<?= site_url('/users/update/'.$user_item['id']);?>" 
+                                               class="btn-update glow-button px-4 py-2 rounded-lg text-white transition action-btn">
+                                                <i class="fas fa-edit mr-1.5"></i> Update
+                                            </a>
+                                            <a href="<?= site_url('/users/delete/'.$user_item['id']);?>" 
+                                               class="btn-danger glow-button px-4 py-2 rounded-lg text-white transition action-btn">
+                                                <i class="fas fa-trash mr-1.5"></i> Delete
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <tr>
+                                    <td colspan="<?= ($logged_in_user['role'] === 'admin') ? 6 : 4 ?>" class="table-cell text-center py-8">
+                                        <i class="fas fa-users text-sage-400 text-4xl mb-4"></i>
+                                        <p class="text-sage-300">No users found.</p>
+                                    </td>
+                                </tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="flex justify-center mt-6">
+                <div class="pagination">
+                    <?php echo $page; ?>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const starsBackground = document.getElementById('starsBackground');
-
-            // Twinkling stars
+            
             for (let i = 0; i < 120; i++) {
                 const star = document.createElement('div');
                 star.classList.add('star');
@@ -192,8 +311,7 @@
                 star.style.animationDelay = `${Math.random() * 4}s`;
                 starsBackground.appendChild(star);
             }
-
-            // Glowing stars
+            
             for (let i = 0; i < 40; i++) {
                 const glowingStar = document.createElement('div');
                 glowingStar.classList.add('glowing-star');
@@ -205,8 +323,7 @@
                 glowingStar.style.animationDelay = `${Math.random() * 3}s`;
                 starsBackground.appendChild(glowingStar);
             }
-
-            // Shooting stars
+            
             for (let i = 0; i < 6; i++) {
                 const shootingStar = document.createElement('div');
                 shootingStar.classList.add('shooting-star');
