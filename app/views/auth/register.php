@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - User Management System</title>
+    <title>Register - User Management System</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
@@ -67,6 +67,16 @@
         .form-input::placeholder {
             color: #849b7a;
             opacity: 0.7;
+        }
+        .form-select {
+            background: #f8faf7;
+            border: 1px solid #d2dfcd;
+            color: #2b3327;
+        }
+        .form-select:focus {
+            outline: none;
+            border-color: #647959;
+            box-shadow: 0 0 0 3px rgba(100, 121, 89, 0.3);
         }
         .action-btn {
             transition: all 0.2s ease;
@@ -228,7 +238,7 @@
         <!-- Header with Darker Text -->
         <header class="mb-8 text-center">
             <h1 class="text-4xl font-bold text-sage-900 header-glow mb-2">User Management System</h1>
-            <p class="text-sage-800 font-medium">Sign in to your account</p>
+            <p class="text-sage-800 font-medium">Create a new account</p>
         </header>
 
         <!-- Main Content Card with Glowing Border -->
@@ -236,7 +246,7 @@
             <!-- Card Header -->
             <div class="px-6 py-4 border-b border-sage-700">
                 <h2 class="text-xl font-semibold text-sage-100 text-center">
-                    <i class="fas fa-sign-in-alt mr-2 text-sage-400"></i>Login
+                    <i class="fas fa-user-plus mr-2 text-sage-400"></i>Register
                 </h2>
             </div>
             
@@ -249,7 +259,7 @@
                     </div>
                 <?php endif; ?>
 
-                <form method="post" action="<?= site_url('auth/login') ?>" class="space-y-6">
+                <form method="POST" action="<?= site_url('auth/register'); ?>" class="space-y-6">
                     <!-- Username Field -->
                     <div>
                         <label class="block text-sage-200 mb-2 font-medium">
@@ -259,6 +269,20 @@
                             type="text" 
                             name="username" 
                             placeholder="Enter your username" 
+                            required
+                            class="form-input w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-sage-400"
+                        >
+                    </div>
+
+                    <!-- Email Field -->
+                    <div>
+                        <label class="block text-sage-200 mb-2 font-medium">
+                            <i class="fas fa-envelope mr-2 text-sage-400"></i>Email
+                        </label>
+                        <input 
+                            type="email" 
+                            name="email" 
+                            placeholder="Enter your email address" 
                             required
                             class="form-input w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-sage-400"
                         >
@@ -281,26 +305,63 @@
                             <button type="button" 
                                     id="togglePassword" 
                                     class="absolute inset-y-0 right-0 pr-3 flex items-center text-sage-600 hover:text-sage-700">
-                                <i class="fas fa-eye" id="toggleIcon"></i>
+                                <i class="fas fa-eye" id="togglePasswordIcon"></i>
                             </button>
                         </div>
                     </div>
 
-                    <!-- Login Button -->
+                    <!-- Confirm Password Field -->
+                    <div>
+                        <label class="block text-sage-200 mb-2 font-medium">
+                            <i class="fas fa-lock mr-2 text-sage-400"></i>Confirm Password
+                        </label>
+                        <div class="relative">
+                            <input 
+                                type="password" 
+                                name="confirm_password" 
+                                id="confirmPassword"
+                                placeholder="Confirm your password" 
+                                required
+                                class="form-input w-full px-4 py-3 pr-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-sage-400"
+                            >
+                            <button type="button" 
+                                    id="toggleConfirmPassword" 
+                                    class="absolute inset-y-0 right-0 pr-3 flex items-center text-sage-600 hover:text-sage-700">
+                                <i class="fas fa-eye" id="toggleConfirmPasswordIcon"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Role Field -->
+                    <div>
+                        <label class="block text-sage-200 mb-2 font-medium">
+                            <i class="fas fa-user-tag mr-2 text-sage-400"></i>Role
+                        </label>
+                        <select 
+                            name="role" 
+                            required
+                            class="form-select w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-sage-400"
+                        >
+                            <option value="user" selected>User</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+
+                    <!-- Register Button -->
                     <button type="submit" 
                             class="btn-primary glow-button text-white w-full py-3 rounded-lg flex items-center justify-center space-x-2 action-btn">
-                        <i class="fas fa-sign-in-alt"></i>
-                        <span class="font-semibold">Login</span>
+                        <i class="fas fa-user-plus"></i>
+                        <span class="font-semibold">Create Account</span>
                     </button>
                 </form>
 
-                <!-- Register Link -->
+                <!-- Login Link -->
                 <div class="mt-6 pt-6 border-t border-sage-800 text-center">
                     <p class="text-sage-300 text-sm">
-                        Don't have an account? 
-                        <a href="<?= site_url('auth/register'); ?>" 
+                        Already have an account? 
+                        <a href="<?= site_url('auth/login'); ?>" 
                            class="text-sage-400 font-medium hover:text-sage-300 transition-colors">
-                            Register here
+                            Login here
                         </a>
                     </p>
                 </div>
@@ -362,23 +423,45 @@
                 starsBackground.appendChild(shootingStar);
             }
 
-            const togglePassword = document.querySelector('#togglePassword');
-            const password = document.querySelector('#password');
-            const toggleIcon = document.querySelector('#toggleIcon');
+            // Toggle password visibility function
+            function setupPasswordToggle(toggleId, inputId, iconId) {
+                const toggle = document.getElementById(toggleId);
+                const input = document.getElementById(inputId);
+                const icon = document.getElementById(iconId);
 
-            togglePassword.addEventListener('click', function () {
-                const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
-                password.setAttribute('type', type);
-                
-                // Toggle eye icon
-                if (type === 'text') {
-                    toggleIcon.classList.remove('fa-eye');
-                    toggleIcon.classList.add('fa-eye-slash');
+                toggle.addEventListener('click', function () {
+                    const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+                    input.setAttribute('type', type);
+                    
+                    // Toggle eye icon
+                    if (type === 'text') {
+                        icon.classList.remove('fa-eye');
+                        icon.classList.add('fa-eye-slash');
+                    } else {
+                        icon.classList.remove('fa-eye-slash');
+                        icon.classList.add('fa-eye');
+                    }
+                });
+            }
+
+            // Setup both password toggles
+            setupPasswordToggle('togglePassword', 'password', 'togglePasswordIcon');
+            setupPasswordToggle('toggleConfirmPassword', 'confirmPassword', 'toggleConfirmPasswordIcon');
+
+            // Password confirmation validation
+            const password = document.getElementById('password');
+            const confirmPassword = document.getElementById('confirmPassword');
+
+            function validatePasswords() {
+                if (password.value !== confirmPassword.value) {
+                    confirmPassword.setCustomValidity("Passwords don't match");
                 } else {
-                    toggleIcon.classList.remove('fa-eye-slash');
-                    toggleIcon.classList.add('fa-eye');
+                    confirmPassword.setCustomValidity('');
                 }
-            });
+            }
+
+            password.addEventListener('input', validatePasswords);
+            confirmPassword.addEventListener('input', validatePasswords);
         });
     </script>
 </body>
