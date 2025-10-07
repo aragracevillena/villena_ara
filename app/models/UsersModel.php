@@ -15,6 +15,12 @@ class UsersModel extends Model {
         parent::__construct();
     }
 
+    public function get_user_by_id($id)
+    {
+        return $this->db->table($this->table)
+                        ->where('id', $id)
+                        ->get();
+    }
 
     public function get_user_by_username($username)
     {
@@ -29,13 +35,6 @@ class UsersModel extends Model {
                         ->update([
                             'password' => password_hash($new_password, PASSWORD_DEFAULT)
                         ]);
-    }
-
-     public function get_user_by_id($id)
-    {
-        return $this->db->table($this->table)
-                        ->where('id', $id)
-                        ->get();
     }
 
     public function get_all_users()
