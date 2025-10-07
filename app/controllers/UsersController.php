@@ -201,7 +201,7 @@ class UsersController extends Controller {
         $records_per_page = 10;
 
         $user = $this->UsersModel->page($q, $records_per_page, $page);
-        $data['user'] = $user['records'];
+        $data['users'] = $user['records'];
         $total_rows   = $user['total_rows'];
 
         $this->pagination->set_options([
@@ -215,12 +215,12 @@ class UsersController extends Controller {
         $this->pagination->initialize($total_rows, $records_per_page, $page, 'users?q='.$q);
         $data['page'] = $this->pagination->paginate();
 
-        $this->call->view('user/dashboard', $data);
+        $this->call->view('users/dashboard', $data);
     }
 
     public function logout()
     {
-        unset($_SESSION['user']); // clear session manually
+        unset($_SESSION['users']); // clear session manually
         redirect('auth/login');
     }
 } 
