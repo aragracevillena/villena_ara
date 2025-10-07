@@ -165,7 +165,7 @@ class UsersController extends Controller {
             }
         }
 
-        $this->call->view('/auth/register');
+        $this->call->view('/auth/login');
     }
 
     public function login()
