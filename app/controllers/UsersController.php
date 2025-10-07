@@ -220,7 +220,8 @@ class UsersController extends Controller {
 
     public function logout()
     {
-        unset($_SESSION['users']); // clear session manually
+        $this->call->library('auth');
+        $this->auth->logout();
         redirect('auth/login');
     }
 } 
